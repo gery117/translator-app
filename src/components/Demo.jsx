@@ -1,6 +1,8 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import {copy, linkIcon, loader, tick} from '../assets'
+import { useGetTranslationMutation } from '../services/text'
+import { Result } from 'postcss'
 
 const Demo = () => {
   const [text, setText] = useState({
@@ -8,9 +10,19 @@ const Demo = () => {
     translation:'',
   });
 
-  const handleSubmit = async(e) => {
-    alert('Submitted');
-  }
+  const [getTranslation, { data, isLoading, error }] = useGetTranslationMutation();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); 
+    try {
+      const result = await getTranslation({ from: 'auto', to: 'en', text: text.text });
+      setText({ ...text, translation: result.data.translation });
+      console.log(result.data.trans)
+    } 
+    catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <section className='mt-16 w-full max-w-xl'>

@@ -10,14 +10,34 @@ const Demo = () => {
     translation:'',
   });
 
+  const [allTranslations, setAllTranslations] = useState([]);
+
   const [getTranslation, { data, isLoading, error }] = useGetTranslationMutation();
+
+  useEffect(() => {
+    const translationFromLocalStorage = JSON.parse(
+      localStorage.getItem('translation')
+    )
+
+    if (translationFromLocalStorage) {
+      setAllTranslations(translationFromLocalStorage)
+    }
+  }, []);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
     try {
       const result = await getTranslation({ from: 'auto', to: 'en', text: text.text });
-      setText({ ...text, translation: result.data.translation });
-      console.log(result.data.trans)
+      const newText = { ...text, translation: result.data.translation };
+      const updatedAlltext = [newText, ...allTranslations]
+      
+      setText(newText);
+      setAllTranslations(updatedAlltext)
+
+      console.log(result.data.trans);
+
+      localStorage.setItem('translation', JSON.stringify(updatedAlltext));
     } 
     catch (err) {
       console.error(err);

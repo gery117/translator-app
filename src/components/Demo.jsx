@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import {copy, linkIcon, loader, tick} from '../assets'
+import {copy, linkIcon, loader, tick, deleteIcon} from '../assets'
 import { useGetTranslationMutation } from '../services/text'
 import { Result } from 'postcss'
 
@@ -29,7 +29,7 @@ const Demo = () => {
     e.preventDefault(); 
     try {
       const result = await getTranslation({ from: 'auto', to: 'en', text: text.text });
-      const newText = { ...text, translation: result.data.translation };
+      const newText = { ...text, translation: result.data.trans};
       const updatedAlltext = [newText, ...allTranslations]
       
       setText(newText);
@@ -42,6 +42,13 @@ const Demo = () => {
     catch (err) {
       console.error(err);
     }
+  };
+
+  const handleDelete = (indexToDelete) => {
+    const updatedTranslations = allTranslations.filter(
+      (item, index) => index !== indexToDelete
+    );
+    setAllTranslations(updatedTranslations);
   };
 
   return (
@@ -88,10 +95,50 @@ const Demo = () => {
                 >
                   {item.text}
                 </p>
+                <button
+              onClick={(e) => {
+                e.stopPropagation(); 
+                handleDelete(index);
+              }}
+              className='delete_btn text-red-500'
+            >
+              <img
+                    src={deleteIcon}
+                    alt="delete_icon"
+                    className='w-[40%] h-[40%] object-contain'
+                  />
+            </button>
               </div>
             )
           )}
         </div>
+      </div>
+      <div className='my-10 max-w-full flex justify-center items-center'>
+          {isLoading ? (
+            <img src={loader} alt='loader' className='w-20 h-20 object-contain'/>
+          ) 
+          : error ? (
+            <p className='font-inter font-bold text-black text-center'>
+                That was not supposed to happen...
+                <br/>
+                <span className='font-satoshi font-normal text-gray-700'>
+                  {error?.data?.error}
+                </span>
+            </p>
+          ) : (
+            text.translation && (
+              <div className='flex flex-col gap-3'>
+                <h2 className='font-satoshi font-bold text-gray-600 text-xl'>
+                  text <span className='blue_gradient'> translation</span>
+                </h2>
+                <div className='summary_box'>
+                    <p className="font-inter font-medium text-sm text-gray-700">
+                      {text.translation}
+                    </p>
+                </div>
+              </div>
+            )
+          )}
       </div>
     </section>
   )

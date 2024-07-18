@@ -12,6 +12,8 @@ const Demo = () => {
 
   const [allTranslations, setAllTranslations] = useState([]);
 
+  const [copied, setCopied] = useState("")
+
   const [getTranslation, { data, isLoading, error }] = useGetTranslationMutation();
 
   useEffect(() => {
@@ -51,6 +53,12 @@ const Demo = () => {
     setAllTranslations(updatedTranslations);
   };
 
+const handleCopy = (copyText) => {
+  setCopied(copyText);
+  navigator.clipboard.writeText(copyText);
+  setTimeout(()=>setCopied(false), 3000);
+}
+
   return (
     <section className='mt-16 w-full max-w-xl'>
       <div className='flex flex-col w-full gap-2'>
@@ -83,9 +91,9 @@ const Demo = () => {
                 onClick={()=> setText(item)}
                 className='link_card'
               >
-                <div className='copy_btn'>
+                <div className='copy_btn' onClick={()=>handleCopy(item.text)}>
                   <img
-                    src={copy}
+                    src={copied === item.text? tick: copy}
                     alt="copy_icon"
                     className='w-[40%] h-[40%] object-contain'
                   />
@@ -96,16 +104,16 @@ const Demo = () => {
                   {item.text}
                 </p>
                 <button
-              onClick={(e) => {
-                e.stopPropagation(); 
-                handleDelete(index);
-              }}
-              className='delete_btn text-red-500'
-            >
-              <img
-                    src={deleteIcon}
-                    alt="delete_icon"
-                    className='w-[40%] h-[40%] object-contain'
+                    onClick={(e) => {
+                      e.stopPropagation(); 
+                      handleDelete(index);
+                    }}
+                    className='delete_btn text-red-500'
+                >
+                  <img
+                        src={deleteIcon}
+                        alt="delete_icon"
+                        className='w-[40%] h-[40%] object-contain'
                   />
             </button>
               </div>

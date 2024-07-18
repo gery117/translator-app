@@ -36,12 +36,15 @@ const Demo = () => {
       const newText = { ...text, translation: result.data.trans};
       const updatedAlltext = [newText, ...allTranslations]
       
-      setText(newText);
+      setText({ text: '', translation: newText.translation });
       setAllTranslations(updatedAlltext)
-
+      
       console.log(result.data.trans);
 
+      
+
       localStorage.setItem('translation', JSON.stringify(updatedAlltext));
+      
     } 
     catch (err) {
       console.error(err);
@@ -89,7 +92,7 @@ const handleCopy = (copyText) => {
         <select
           value={targetLanguage}
           onChange={(e) => setTargetLanguage(e.target.value)}
-          className='language_select'
+          className='flex-1 font-satoshi text-blue-700 font-medium text-sm truncate'
         >
           <option value="af">Afrikaans</option>
           <option value="sq">Albanian</option>
@@ -230,7 +233,6 @@ const handleCopy = (copyText) => {
           <option value="yi">Yiddish</option>
           <option value="yo">Yoruba</option>
           <option value="zu">Zulu</option>
-          {/* Add more languages as needed */}
         </select>
 
         <div className='flex flex-col gap-1 max-h-60 overflow-y-auto'>
